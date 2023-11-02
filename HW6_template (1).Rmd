@@ -1,0 +1,139 @@
+---
+title: "STAT 230 Homework 6"
+author: "Owen Forman"
+output: pdf_document
+---
+
+```{r, include = F}
+knitr::opts_chunk$set(echo = TRUE, fig.height=3, fig.width=3,
+                      fig.align='center',
+                      message = FALSE)
+```
+
+
+**1.** One of my goals for you for this class is to challenge the way society often thinks of statistics: as unbiased and distanced from the subject of research. From the SOAN/STAT Project, we hoped that you would get a sense of a real-life application of statistics in a meaningful analysis of a societal issue: mass incarceration. For this homework, I want you to think more about the meaning behind some of the analyses that you might do after this class. Creating a model or performing an analysis may feel a bit detached at times, but oftentimes we are doing work that has really serious implications. The people behind the numbers are important!
+
+I've included some images made by the data journalist Mona Chalabi. Her self-stated goal is as follows: "Using words, color and sound, Mona rehumanizes data to better help us understand our world and the way we live in it."
+
+For \textbf{each of the following images}, I want you to reflect on the following: \newline
+1. What is your reaction to the image? What is your takeaway in terms of the numerical "result" conveyed?` \newline
+2. What does the image prompt that a normal scatterplot/histogram/numerical summary would not?
+
+\textbf{Figure 1 Reaction: US Workers on Strike} \newline
+1.) My initial reaction to seeing this image was surprise, not only at the numerical aspect, but also at the added message the image conveys by showing the people behind the strikes.  In terms of numerical take away, my takeaway is that there were significantly more US workers on strike around 1947 to what looks like maybe 1980 than there are in current day (though there was a spike a few years ago)
+
+2.) The image does a good job in representing WHO the strikers were, which is information that wouldn't be apparent in in a normal plot. Specifically, it shows the numerical summary (that there were more US workers on Strike pre 1980ish than modern day) AS WELL AS the fact that all of the spikes (massive increases in workers on strike) were held up by women, and other minority groups. I think there's an added message as well that women and minority groups carry out much larger strikes (which is a good thing) than others, since the spikes are being held up by these groups, but the white pilot, and other white workers are only standing idly by, with only the one white worker having to stoop down to carry up the 2019ish spike in the graph.
+
+
+\textbf{Figure 2 Reaction: Ukraine Fleeing} \newline
+1.)  My initial reaction to seeing this image was sadness, and shock. Clearly the statistic/numerical information that is being represented is horrifying, 1 and 4 million people are massive numbers, but when put in perspective that its 11% of the country it's even more shocking. Additionally seeing the size of that removal (represented by the removal of yellow squares/suitcases) shows the scale of harm being caused. Numerically, this graphic is showing that 11% of the Ukraine is expecte to flee. Though one small comment I had was that while 11 squares suitcases are removed, there are only 50 total represented in the graphic, so it slightly misrepresents the size of the affect.
+
+2.) I think the image does a really good job humanizing each "chunk" of people. While the same kind of data could be represented using a piechart/just showing the removed squares from the total, the transformation of the square in the plot into a suitcase it reminds people that millions are currently fleeing their home country. By doing this it humanizes the data. Also, the color scheme of blue and yellow matches the Ukrainian flag, which is a subtle but important inclusion to remind readers specifically which group of people is being affected.
+
+
+\textbf{Figure 3 Reaction: Guam Kingfishers} \newline
+1.) My initial reaction to this graphic was: "woah" (or in other words complete surprise). Mostly this shock came from SEEING the total number of Guam Kingfishers left, as opposed to reading the number, since it is shockingly low. Numerically this graphic represents the total # of guam kingfishers left in the world, and it represents this data by visualizing the number in terms of birds (points) included in the graphic.
+
+2.) Like the other figures, this graphic does a great job not only describing the data, but SHOWING the viewer what is actually going on. By visualizing the total number of Guam Kingfishers still left in the world inside a train, it relates the number to something most viewers of the graphic will understand. While 145 is a relatively small number, and it may still be shocking to hear that only 145 of any animal are left alive in the world, seeing that the total number of guam kingfishers left fit inside a single train car is considerably more shocking (at least to me).
+
+
+\textbf{Figure 4 Reaction: Risk of Dying} \newline
+1.) Again, my first reaction to seeing this graphic is surprise. This graphic was a little more complicated than the others, so took slighly longer to fully comprehend the purpose/message, however I was surprised to see the results. Numerically the plot represents the hazard ratio of communicable diseases vs. BMI (which is visualy split into groups based on what I believe is medically considered underweight, overweight, and obese, and what is societally considered a "healthy weight" since it is marked in "'s). The data shows that the BMI considered overweight actually a has the lowest hazard ration when it comes to risk of dying of communicable diseases. This goes against the notion of a "healthy" weight. which if it were actually the healthiest we would expect to have the lowest risk score.
+
+2.) I think the most important added part of this graphic is the addition of the groupings of underweight, "healthy weight", overweight, and obese. While the person laying down models the curve nicely, I don't think they make a major difference on how the data is interpreted. On the other hand, the groupings send a specific message, that would not be picked up if the curve was shown by itself. While many people generally understand what BMI means, at the end of the day it's just a number, and it may be hard for some readers to translate a BMI number into real life equivalents. Adding the grouping aspect translates the BMI number into something people understand.
+
+
+**2.** Load the data:
+
+```{r}
+schools <- read.csv('https://www.math.carleton.edu/ckelling/data/schools.csv', 
+                    header=TRUE)
+```
+
+These data consist of measurements taken on a random sample of 70 schools throughout the country in 1965. The variables measured are indices of student achievement (`ACHV`), family socioeconomic status (`FAM`), and school quality (`SCHOOL`, measured as a function of available facilities and faculty credentials). All the data are on a unitless, standardized scale. Values below zero represent below-average measurements and values above zero represent above-average measurements. 
+
+The purpose of collecting these data was to study the effects of school quality on student acheivement, controlling for family socioeconomic status.
+
+(a) Make a scatterplot matrix of the data and comment on what you see.
+
+\textbf{Answer:} After creating a scatterplot matrix of the data, the first thing I noticed was that the SCHOOL and FAM variables appear to be very positively correlated, with a correlation value of .986 (in other worlds, the quality of the school is extremely correlated with family socioeconomic status). It also appears like the ACHV variable is positively correlated with the FAM with a correlation of .419 and SCHOOL with a correlation of .418, however these correlations are much weaker than that between FAM and SCHOOL.
+
+```{r}
+library(GGally)
+
+ggpairs(data = schools)
+```
+
+
+
+(b) Fit the linear model using `ACHV` as the response variable and `FAM` and `SCHOOL` as the predictors:
+$$\text{ACHV} = \beta_0 + \beta_1 \text{FAM} + \beta_2 \text{SCHOOL} + \epsilon, \, \epsilon \stackrel{\text{i.i.d.}}{\sim} N(0,\sigma)$$
+Give the coefficient estimates and standard errors. Interpret the two coefficient estimates
+
+\textbf{Answer:} The coefficient estimates and standard errors are below. We interpret beta1 as: For every one unit increase in family socioeconomic status we expect student achievement to increase by 0.54204. We interpret beta2 as: For every one unit increase in School Quality we expect student achievement to increase by 0.36295. Note these scores are all standardized.
+
+$$\beta_0 = -0.01916 \;with \; SE=0.25123, \; \beta_1 =.54204\; with\; SE=1.37947, \; \beta_2 = 0.36295 \; with \; SE = 1.45981 $$
+
+
+```{r}
+#creates lm for schools dataset
+schools_lm <- lm(ACHV ~ FAM + SCHOOL, data = schools)
+summary(schools_lm)
+```
+
+
+(c) Compare the $p$-values from the individual $t$-tests to the global $F$-test for the model in part (b).
+
+
+\textbf{Answer:} The global P-value for the f-test is 0.001483. This implies that our model fits the data extremely well. However, we see the following P-values for individual F-tests of the variables
+
+FAM p-value individual F-test: 0.695617
+SCHOOL p-value individual F-test: .804410
+
+This implies that neither FAM nor SCHOOL has a statistically significant impact on predicting the ACHV. This may seem paradoxical, but is most likely because we have colinearity issues (which are explained in later parts)
+```{r}
+#summarizes AOV model to see valid p-value for SCHOOL F test
+summary(aov(schools_lm))
+```
+```{r}
+#remakes LM with FAM variable last
+schools_lm <- lm(ACHV ~ SCHOOL + FAM , data = schools)
+
+#summarizes AOV model with 
+summary(aov(schools_lm))
+```
+
+
+(d) Calculate the VIFs for the two variables. On the basis of this and the scatterplot matrix in part (a), comment on the apparent conflict between the $t$-tests and $F$-test in part (c).
+
+\textbf{Answer:} The VIFs for School and FAM are 35.17692. This is expected from the scatterplot matrix in part (a) since we noticed that FAM and SCHOOL were extremely correlated. This also explains the conflict we saw in part (c) that seemed paradoxical since we concluded that neither one of our variables had a statistically significant impact on predicting ACHV, yet we said our model as a whole did a good job at predicitng ACHV. Since our variables are extremely correlated, we have colinearity concerns, which account for the afformentioned confusions/conflicts.
+
+```{r}
+library(car)
+
+vif(schools_lm)
+```
+
+
+(e) Consider re-parameterizing the set of predictor variables in the following way. Let one predictor be the average of the school quality and family socioeconomic status indices (measuring therefore an average advantage given to the students at that school). Let the other predictor be the difference between the school quality and family socioeconomic status indices:
+```{r}
+schools$avgQuality <- (schools$SCHOOL + schools$FAM)/2
+schools$diffQuality <- (schools$SCHOOL - schools$FAM)
+```
+
+Fit the model of `ACHV` against these two predictors:
+$$\text{ACHV} = \alpha_0 + \alpha_1 \text{AVG} + \alpha_2 \text{DIFF} + \epsilon, \, \epsilon \stackrel{\text{i.i.d.}}{\sim} N(0,\sigma)$$
+Give the coefficient estimates and standard errors. Interpret the two coefficient estimates.
+
+```{r}
+schools_new_lm <- lm(ACHV ~ avgQuality + diffQuality, data = schools)
+
+summary(schools_new_lm)
+```
+
+
+(f) Verify that the models in part (b) and (e) are equivalent, in the sense of giving the same predicted values.
+
+(g) Calculate the VIFs for model (e). Compare the standard errors of the coefficient estimates in model (e) to those in model (b), and explain why the SEs in the first model are so much bigger than the SEs in the second model.
+
+(h) The purpose of the study was to assess the effect of school quality, holding family socioeconomic status constant. Using the model(s) from part(s) (b) and/or (e), explain why these data cannot address this question.
